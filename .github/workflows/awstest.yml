@@ -46,6 +46,7 @@ jobs:
         uses: seqeralabs/action-tower-launch@v2
         if: ${{ matrix.enabled && ( github.event_name != 'workflow_dispatch' || inputs.aws ) }}
         with:
+          run_name: sarek_${{ matrix.profile }}_aws
           workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
           compute_env: ${{ secrets.TOWER_COMPUTE_ENV }}
@@ -54,7 +55,7 @@ jobs:
           parameters: |
             {
               "hook_url": "${{ secrets.MEGATESTS_ALERTS_SLACK_HOOK_URL }}",
-              "outdir": "s3://${{ secrets.AWS_S3_BUCKET }}/sarek/results-${{ github.sha }}/${{ matrix.profile }}"
+              "outdir": "s3://${{ secrets.AWS_S3_BUCKET }}/sarek/results-${{ github.sha }}/${{ matrix.profile }}/"
             }
           profiles: ${{ matrix.profile }}
 
@@ -72,6 +73,7 @@ jobs:
         uses: seqeralabs/action-tower-launch@v2
         if: ${{ matrix.enabled && ( github.event_name != 'workflow_dispatch' || inputs.azure ) }}
         with:
+          run_name: sarek_${{ matrix.profile }}_aws
           workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
           compute_env: ${{ secrets.TOWER_CE_AZURE_CPU }}
@@ -80,7 +82,7 @@ jobs:
           parameters: |
             {
               "hook_url": "${{ secrets.MEGATESTS_ALERTS_SLACK_HOOK_URL }}",
-              "outdir": "az://${{ secrets.TOWER_BUCKET_AZURE }}/sarek/results-${{ github.sha }}/${{ matrix.profile }}"
+              "outdir": "az://${{ secrets.TOWER_BUCKET_AZURE }}/sarek/results-${{ github.sha }}/${{ matrix.profile }}/"
             }
           profiles: ${{ matrix.profile }}
 
