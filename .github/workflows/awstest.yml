@@ -78,15 +78,13 @@ jobs:
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
           compute_env: ${{ secrets.TOWER_CE_AZURE_CPU }}
           revision: ${{ github.sha }}
-          workdir: ${{ secrets.TOWER_BUCKET_AZURE}}/work/sarek/work-${{ github.sha }}/${{ matrix.profile }}
+          workdir: ${{ secrets.TOWER_BUCKET_AZURE}}/sarek/work-${{ github.sha }}/${{ matrix.profile }}
           parameters: |
             {
-              "input": "https://raw.githubusercontent.com/nf-core/test-datasets/sarek/testdata/csv/HCC1395_WXS_somatic_full_test_azure.csv",
-              "intervals": "az://test-data/sarek/S07604624_Padded_Agilent_SureSelectXT_allexons_V6_UTR.bed",
               "hook_url": "${{ secrets.MEGATESTS_ALERTS_SLACK_HOOK_URL }}",
               "outdir": "${{ secrets.TOWER_BUCKET_AZURE }}/sarek/results-${{ github.sha }}/${{ matrix.profile }}/"
             }
-          profiles: ${{ matrix.profile }}
+          profiles: ${{ matrix.profile }}_azure
 
       - uses: actions/upload-artifact@v3
         name: Save Azure Logs
