@@ -6,15 +6,15 @@ on:
   workflow_dispatch:
     inputs:
       profiletest:
-        description: "Trigger profile tests (smaller)"
+        description: "-profile test (smaller)"
         type: boolean
         default: true
       somatic:
-        description: "Trigger somatic full test"
+        description: "Somatic full test"
         type: boolean
         default: false
       germline:
-        description: "Trigger germline full test"
+        description: "Germline full test"
         type: boolean
         default: false
       aws:
@@ -44,7 +44,7 @@ jobs:
       # Launch workflow on AWS Batch
       - name: AWS Launch
         uses: seqeralabs/action-tower-launch@v2
-        if: matrix.enabled && ( github.event_name != 'workflow_dispatch' || inputs.aws )
+        if: ${{ matrix.enabled && ( github.event_name != 'workflow_dispatch' || inputs.aws ) }}
         with:
           workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
@@ -60,7 +60,7 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         name: Save AWS Logs
-        if: ${{ matrix.enabled }}
+        if: ${{ matrix.enabled && ( github.event_name != 'workflow_dispatch' || inputs.aws ) }}
         with:
           name: tower-aws-${{ matrix.profile }}-log
           path: |
@@ -70,7 +70,7 @@ jobs:
       # Launch workflow using Tower CLI tool action
       - name: Azure Launch
         uses: seqeralabs/action-tower-launch@v2
-        if: matrix.enabled && ( github.event_name != 'workflow_dispatch' || inputs.azure )
+        if: ${{ matrix.enabled && ( github.event_name != 'workflow_dispatch' || inputs.azure ) }}
         with:
           workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
@@ -86,7 +86,7 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         name: Save Azure Logs
-        if: ${{ matrix.enabled }}
+        if: ${{ matrix.enabled && ( github.event_name != 'workflow_dispatch' || inputs.azure ) }}
         with:
           name: tower-azure-${{ matrix.profile }}-log
           path: |
