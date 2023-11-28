@@ -81,6 +81,8 @@ jobs:
           workdir: az://${{ secrets.TOWER_BUCKET_AZURE}}/work/sarek/work-${{ github.sha }}/${{ matrix.profile }}
           parameters: |
             {
+              "input": "https://raw.githubusercontent.com/nf-core/test-datasets/sarek/testdata/csv/HCC1395_WXS_somatic_full_test_azure.csv",
+              "intervals": "az://test-data/sarek/S07604624_Padded_Agilent_SureSelectXT_allexons_V6_UTR.bed",
               "hook_url": "${{ secrets.MEGATESTS_ALERTS_SLACK_HOOK_URL }}",
               "outdir": "az://${{ secrets.TOWER_BUCKET_AZURE }}/sarek/results-${{ github.sha }}/${{ matrix.profile }}/"
             }
