@@ -19,6 +19,14 @@ on:
         description: "Trigger germline full test on AWS"
         type: boolean
         default: false
+      aws:
+        description: "Run test on AWS Batch compute environment."
+        type: boolean
+        default: true
+      azure:
+        description: "Run test on Azure Batch compute environment."
+        type: boolean
+        default: true
 
 jobs:
   trigger-profile-test:
@@ -35,10 +43,10 @@ jobs:
           - profile: test_full_germline
             enabled: ${{ ( github.repository == 'nf-core/sarek' ) && ( github.event_name != 'workflow_dispatch' || inputs.germline ) }}
     steps:
-      # Launch workflow using Tower CLI tool action
-      - name: Launch workflow via tower
+      # Launch workflow on AWS Batch
+      - name: AWS Launch
         uses: seqeralabs/action-tower-launch@v2
-        if: ${{ matrix.enabled }}
+        if: matrix.enabled && ( github.event_name != 'workflow_dispatch' || inputs.aws )
         with:
           workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
@@ -53,9 +61,36 @@ jobs:
           profiles: ${{ matrix.profile }}
 
       - uses: actions/upload-artifact@v3
+        name: Save AWS Logs
         if: ${{ matrix.enabled }}
         with:
-          name: tower-${{ matrix.profile }}-log
+          name: tower-aws-${{ matrix.profile }}-log
+          path: |
+            tower_action_*.log
+            tower_action_*.json
+
+      # Launch workflow using Tower CLI tool action
+      - name: Azure Launch
+        uses: seqeralabs/action-tower-launch@v2
+        if: matrix.enabled && ( github.event_name != 'workflow_dispatch' || inputs.aws )
+        with:
+          workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
+          access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
+          compute_env: ${{ secrets.TOWER_CE_AZURE_CPU }}
+          revision: ${{ github.sha }}
+          workdir: az://${{ secrets.TOWER_BUCKET_AZURE}}/work/sarek/work-${{ github.sha }}/${{ matrix.profile }}
+          parameters: |
+            {
+              "hook_url": "${{ secrets.MEGATESTS_ALERTS_SLACK_HOOK_URL }}",
+              "outdir": "az://${{ secrets.TOWER_BUCKET_AZURE }}/sarek/results-${{ github.sha }}/${{ matrix.profile }}"
+            }
+          profiles: ${{ matrix.profile }}
+
+      - uses: actions/upload-artifact@v3
+        name: Save Azure Logs
+        if: ${{ matrix.enabled }}
+        with:
+          name: tower-azure-${{ matrix.profile }}-log
           path: |
             tower_action_*.log
             tower_action_*.json
