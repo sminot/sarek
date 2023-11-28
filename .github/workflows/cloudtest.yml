@@ -1,4 +1,4 @@
-name: nf-core AWS test
+name: nf-core cloud test
 
 on:
   release:
