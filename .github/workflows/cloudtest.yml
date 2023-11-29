@@ -34,12 +34,19 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - profile: test
+          - profile: test_aws
             enabled: ${{ ( github.repository == 'nf-core/sarek' ) && ( github.event_name != 'workflow_dispatch' || inputs.profiletest ) }}
-          - profile: test_full
+          - profile: test_azure
+            enabled: ${{ ( github.repository == 'nf-core/sarek' ) && ( github.event_name != 'workflow_dispatch' || inputs.profiletest ) }}
+          - profile: test_full_aws
             enabled: ${{ ( github.repository == 'nf-core/sarek' ) && ( github.event_name != 'workflow_dispatch' || inputs.somatic ) }}
-          - profile: test_full_germline
+          - profile: test_full_azure
+            enabled: ${{ ( github.repository == 'nf-core/sarek' ) && ( github.event_name != 'workflow_dispatch' || inputs.somatic ) }}
+          - profile: test_full_germline_aws
             enabled: ${{ ( github.repository == 'nf-core/sarek' ) && ( github.event_name != 'workflow_dispatch' || inputs.germline ) }}
+          - profile: test_full_germline_azure
+            enabled: ${{ ( github.repository == 'nf-core/sarek' ) && ( github.event_name != 'workflow_dispatch' || inputs.germline ) }}
+
     steps:
       # Launch workflow on AWS Batch
       - name: AWS Launch
