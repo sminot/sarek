@@ -53,7 +53,7 @@ jobs:
         uses: seqeralabs/action-tower-launch@v2
         if: ${{ matrix.enabled && ( github.event_name != 'workflow_dispatch' || inputs.aws ) }}
         with:
-          run_name: sarek_${{ matrix.profile }}_aws
+          run_name: sarek_${{ matrix.profile }}
           workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
           compute_env: ${{ secrets.TOWER_COMPUTE_ENV }}
@@ -80,7 +80,7 @@ jobs:
         uses: seqeralabs/action-tower-launch@v2
         if: ${{ matrix.enabled && ( github.event_name != 'workflow_dispatch' || inputs.azure ) }}
         with:
-          run_name: sarek_${{ matrix.profile }}_azure
+          run_name: sarek_${{ matrix.profile }}
           workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
           compute_env: ${{ secrets.TOWER_CE_AZURE_CPU }}
@@ -91,7 +91,7 @@ jobs:
               "hook_url": "${{ secrets.MEGATESTS_ALERTS_SLACK_HOOK_URL }}",
               "outdir": "${{ secrets.TOWER_BUCKET_AZURE }}/sarek/results-${{ github.sha }}/${{ matrix.profile }}/"
             }
-          profiles: ${{ matrix.profile }}_azure
+          profiles: ${{ matrix.profile }}
 
       - uses: actions/upload-artifact@v3
         name: Save Azure Logs
